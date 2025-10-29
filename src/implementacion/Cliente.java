@@ -1,7 +1,5 @@
 package implementacion;
 
-import jdk.internal.misc.FileSystemOption;
-
 public class Cliente {
 	private String nombre;
 	private Integer telefono;
@@ -10,7 +8,7 @@ public class Cliente {
 //-------metodos publicos---------
 	
 	//constructor
-	public Cliente(String nombre, Integeer telefono, String email) {
+	public Cliente(String nombre, Integer telefono, String email) {
 		this.nombre = nombre;
 		this.telefono = telefono;
 		this.email = email;
@@ -25,13 +23,13 @@ public class Cliente {
 	//tengo entendido que hay que hacer distintas funciones tipo get para obtener datos de atributos 
 	//para saber u obtener el contenido de la variable.
 	public String getNombre() {
-		return nombre;
+		return this.nombre;
 	}
 	public Integer getTelefono() {
-		return telefono;
+		return this.telefono;
 	}
-	public String email() {
-		return email;
+	public String getEmail() {
+		return this.email;
 	}
 	
 

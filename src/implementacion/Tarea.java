@@ -17,7 +17,7 @@ public class Tarea {
 		this.descripcion = descripcion;
 		this.diasNecesarios = diasNecesarios;
 		this.fechaAsignacion = fechaAsignacion;
-		this.diasRetraso = 0.0; // en 0.0 porque es el inicial...
+		this.diasRetraso = 0.0; // en 0.0 porque es inicial...
 		this.empleado = null;
 	}
 
@@ -31,20 +31,52 @@ public class Tarea {
 		this.diasRetraso = this.diasRetraso + diasAdicionales;
 	}
 
-	public Double calcularTiempo() { // si multiplico el total de dias por 8 me va a devolver la cantidad de hrs totales
-		Double diasTotales = this.diasNecesarios + this.diasRetraso;
+// esta funcion que va a usarse en calcularTiempo y calcularCosto
+	private Double getDiasTotales() {
+		return this.diasNecesarios + this.diasRetraso;
+	}
+
+	public Double calcularTiempo() { // si multiplico el total de dias por 8 me va a devolver la cantidad de hrs
+									 // totales
 		// 1 día = 8 horas y 0,5 días = 4 horas.
-		return diasTotales * 8;
+		return getDiasTotales() * 8;
 	}
 
-	public void calcularCosto() {
-
+//calcular costo se usa con polimorfismo ya que varia si el empleado es comun o permanente
+	public Double calcularCosto() {
+		if (this.empleado == null) {// IREP (?
+			return 0.0;
+		}
+		// Llama al Empleado, este va a usar su propia lógica (Comun o Permanente).
+		return this.empleado.calcularCostoTarea(getDiasTotales());
 		// horas * valorHora del empleado.
+
 	}
 
-	boolean tareaFinalizada() {
-		return false;
-		// devuelve true si la tarea fue finalizada.
+// Método auxiliar para cambiar el estado de la tarea a finalizada.
+// Este método será llamado por (HomeSolution/Proyecto).
+	public void finalizarTarea() {
+		this.finalizada = true;
 	}
 
+	/**
+	 * [cite_start]Devuelve true si la tarea fue finalizada[cite: 197].
+	 */
+	public boolean tareaFinalizada() {
+		return this.finalizada;
+	}
+//TP: El toString solo devuelve el título
+	@Override
+	public String toString() {
+		return this.titulo;
+	}
+	
+//getters
+	public String getTitulo() {return this.titulo;}
+	public String getDescripcion(){return this.descripcion;}
+	public Double getdiasNecesarios(){return this.diasNecesarios;}
+	public LocalDate getFechaAsignacion() {return this.fechaAsignacion;}
+	public Double diasRetraso() {return this.diasRetraso;}
+	public Empleado empleado(){return this.empleado;}
+	//"ALGUNOS DEBEN ESTAR DE MAS, REVISAR CUALES SE UTILIZAN"
 }
