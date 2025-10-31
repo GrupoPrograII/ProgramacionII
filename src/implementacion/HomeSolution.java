@@ -43,7 +43,7 @@ public class HomeSolution implements IHomeSolution{
 
 	@Override
 	public void asignarResponsableEnTarea(Integer numeroId, String titulo) throws Exception {
-		Proyecto p = proyectos.get(numero);
+		Proyecto p = proyectos.get(numeroId);
 	    if (p == null) throw new IllegalArgumentException("Proyecto no encontrado.");
 	    if (p.estaFinalizado()) throw new Exception("El proyecto está finalizado.");
 
@@ -116,15 +116,22 @@ public class HomeSolution implements IHomeSolution{
 	}
 
 	@Override
-	public void finalizarTarea(Integer numero, String titulo) throws Exception {
-		// TODO Auto-generated method stub
+	public void finalizarTarea(Integer numeroId, String titulo) throws Exception {
+		Proyecto p = proyectos.get(numeroId);
+		Tarea t = p.buscarTarea(titulo);
 		
+		if (t == null) throw new IllegalArgumentException("Tarea no encontrada");
+	    
+		t.tareaFinalizada();
 	}
 
 	@Override
-	public void finalizarProyecto(Integer numero, String fin) throws IllegalArgumentException {
-		// TODO Auto-generated method stub
+	public void finalizarProyecto(Integer numeroId, String fin) throws IllegalArgumentException {
+		Proyecto p = proyectos.get(numeroId);
+		if (p == null) throw new IllegalArgumentException("Proyecto no encontrado.");
+		if (fin < LocalDate.now()) throw new IllegalArgumentException("Fecha invalida");
 		
+		p.finalizar();
 	}
 
 	@Override
@@ -168,7 +175,7 @@ public class HomeSolution implements IHomeSolution{
 	@Override
 	public double costoProyecto(Integer numeroId) {
 		Proyecto p = proyectos.get(numeroId);
-	    return p.calcularCosto();
+	    return p.costoFinal();
 	}
 
 	@Override
@@ -222,22 +229,34 @@ public class HomeSolution implements IHomeSolution{
 	}
 
 	@Override
-	public List<Tupla<Integer, String>> empleadosAsignadosAProyecto(Integer numero) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<Tupla<Integer, String>> empleadosAsignadosAProyecto(Integer numeroId) {
+		Proyecto p = proyectos.get(numeroId);
+		return p.getEmpleadosDelProyecto();
 	}
 
 	@Override
-	public Object[] tareasProyectoNoAsignadas(Integer numero) {
-		// TODO Auto-generated method stub
-		return null;
+	public Object[] tareasProyectoNoAsignadas(Integer numeroId) {
+		Proyecto p = proyectos.get(numeroId); 
+	    if (p == null) {
+	        throw new IllegalArgumentException("El proyecto no existe.");
+	    }
+
+	    List<Tarea> noAsignadas = new ArrayList<>();
+
+	    for (Tarea tarea : p.getTareas().values()) { 			// recorre todas las tareas
+	        if (tarea.getEmpleado() == null) { 					// si no tiene empleado asignado
+	            noAsignadas.add(tarea);
+	        }
+	    }
+
+	    return noAsignadas.toArray();
 	}
 
 	@Override
 	public Object[] tareasDeUnProyecto(Integer numeroId) {
 		Proyecto p = proyectos.get(numeroId);
-		p.Tareas();				//NO SE si esta bien
-		return null;			//quiero que devuelva el conjunto de tareas de un proyecto
+		return p.getTareas();				
+								//devuelve el diccionario de tareas de un proyecto
 	}
 
 	@Override
@@ -264,9 +283,9 @@ public class HomeSolution implements IHomeSolution{
 	}
 
 	@Override
-	public String consultarProyecto(Integer numero) {
-		// TODO Auto-generated method stub
-		return null;
+	public String consultarProyecto(Integer numeroId) {
+		Proyecto p = proyectos.get(numeroId);
+		return p.toString();
 	}
 
 }
