@@ -11,9 +11,9 @@ public class Proyecto {
 	private String [] cliente;
 	private String inicio;
 	private String fin;
-	private Map<Integer, Tarea> tareas = new HashMap<>(); 
+	private Object[] tareas = new Object[10];    // si es una ibject es un array fijo, Cual era el limite de tareas de una proyecto?
 	private boolean estaFinalizado; 
-	private List<Empleado> empleadosProyecto;
+	private List<Tupla<Integer, String>> empleadosProyecto;
 
 	public Proyecto(int numeroId, String domicilio, String[] cliente, String inicio, String fin) {
 		this.numeroId = numeroId;
@@ -26,34 +26,47 @@ public class Proyecto {
 	}
 	
 	public void agregarTarea (Tarea t) {
-		tareas.put(t);
+		for (int i = 0; i < tareas.length; i++) {
+	        if (tareas[i] == null) {
+	            tareas[i] = t;
+	            return;
+	        }
+	    }
+	    throw new IllegalStateException("No hay espacio para más tareas");
 	}
 	
 	public Tarea buscarTarea (String titulo) throws IllegalArgumentException {
-		for (Tarea t : tareas) {
-            if (t.getTitulo().equals(titulo)) {
-                return t;
-            }
-		}
+		for (Object o : tareas) {
+	        if (o != null) {
+	            Tarea t = (Tarea) o;
+	            if (t.getTitulo().equals(titulo)) {
+	                return t;
+	            }
+	        }
+	    }
         throw new IllegalArgumentException("No se encontró la tarea: " + titulo);
     }
 	
 	public void asignarEmpleado(Empleado e) {
-		empleadosProyecto.add(e);
+		empleadosProyecto.add(new Tupla <>(e.getLegajo(), e.getNombre()));
 	}
 	
 	public boolean todasTareasFinalizadas() {        //corta cuando encuentras una atrea en false, si no sigue y sale en true
-        for (Tarea t : tareas.values()) {
-            if (!t.tareaFinalizada()) {
-            	return false;
-            }
+		for (Object o : tareas) {
+	        if (o != null) {
+	            Tarea t = (Tarea) o;
+	            if (!t.tareaFinalizada()) {
+	            	return false;
+	            }
+	        }
         }
-        return true;
+		return false;
     }
 	
 	 public double calcularFinal() {
 	        double total = 0;
-	        for (Tarea t : tareas.values()) {
+	        for (Object o : tareas) {
+	        	Tarea t = (Tarea) o;
 	            total += t.calcularCosto();
 	        }
 	        return total;
@@ -84,13 +97,12 @@ public class Proyecto {
 		return estaFinalizado;
 	}
 	
-	public Map<Integer, Tarea> getTareas() {
+	public Object[] getTareas() {
         return tareas;
     }
 	
-	public List<Empleado> getEmpleadosDelProyecto(){
+	public List<Tupla<Integer, String>> getEmpleadosDelProyecto(){  
 		return empleadosProyecto;
 	}
-
 
 }
