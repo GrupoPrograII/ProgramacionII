@@ -1,8 +1,6 @@
 package entidades;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class Proyecto {
 	
@@ -104,5 +102,6 @@ public class Proyecto {
 	public List<Tupla<Integer, String>> getEmpleadosDelProyecto(){  
 		return empleadosProyecto;
 	}
+
 
 }
