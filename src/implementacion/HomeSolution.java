@@ -11,20 +11,23 @@ public class HomeSolution implements IHomeSolution{
 	private Map<Integer, Empleado> empleados = new HashMap<>();
     private Map<Integer, Proyecto> proyectos = new HashMap<>();
 	private int numero = 0;
+	private int legajo = 0;
 	
-	public void registrarEmpleado(String nombre, Integer legajo, double valor) throws IllegalArgumentException {
+	public void registrarEmpleado(String nombre, double valor) throws IllegalArgumentException {
 		if(nombre == null || nombre.isEmpty() || valor < 0) {
 			throw new IllegalArgumentException("Datos de empleados invalidos");
 		}else {
+			legajo++;
 			Empleado nuevo = new EmpleadoComun(nombre, legajo, valor);
 			empleados.put(nuevo.getLegajo(), nuevo);
 		}
 	}
 
-	public void registrarEmpleado(String nombre, Integer legajo, double valor, String categoria) throws IllegalArgumentException {
+	public void registrarEmpleado(String nombre, double valor, String categoria) throws IllegalArgumentException {
 		if(nombre == null || nombre.isEmpty() || valor < 0) {
 			throw new IllegalArgumentException("Datos de empleados invalidos");
 		}else {
+			legajo++;
 			Empleado nuevo = new EmpleadoPermanente(nombre, legajo, valor, categoria);
 			empleados.put(nuevo.getLegajo(), nuevo);
 		}
@@ -36,8 +39,10 @@ public class HomeSolution implements IHomeSolution{
 		if(domicilio == null || cliente == null) {
 			throw new IllegalArgumentException("Datos de proyecto invalidos");
 		}else {
-			Proyecto p = new Proyecto(numero ++ ,domicilio,cliente,inicio,fin);
+			numero++;
+			Proyecto p = new Proyecto(numero,domicilio,cliente,inicio,fin);
 			proyectos.put(p.getNumeroId(), p);
+			
 		}
 	}
 
@@ -58,6 +63,7 @@ public class HomeSolution implements IHomeSolution{
 
 	    t.asignarEmpleado(elegido);
 	    p.asignarEmpleado(elegido);
+	    elegido.estaDisponible = false;
 	}
 		
 	@Override
@@ -88,6 +94,7 @@ public class HomeSolution implements IHomeSolution{
 	    
 	    t.asignarEmpleado(mejor);
 	    p.asignarEmpleado(mejor);
+	    mejor.estaDisponible = false;
 	}
 
 	@Override
@@ -142,7 +149,7 @@ public class HomeSolution implements IHomeSolution{
 		Empleado nuevo = empleados.get(legajo);
 		Empleado anterior = t.getEmpleadoTarea();
 		anterior.estaDisponible = true;				//CONTROLAR
-		t.setEmpleado(nuevo);						//la idea es que cambie el booleano esta disponible cuando los cambio
+		t.asignarEmpleado(nuevo);						//la idea es que cambie el booleano esta disponible cuando los cambio
 		nuevo.estaDisponible = false;				// y que a latarea se le asigne el nuevo empleado
 		
 	}
@@ -153,7 +160,7 @@ public class HomeSolution implements IHomeSolution{
 		Tarea t = p.buscarTarea(titulo);
 		if(t.getEmpleadoTarea() == null) throw new Exception("La tarea no tiene empleado asignado");
 		
-		//bueca el de menos restrasos para reasignar
+		//busca el de menos restrasos para reasignar
 	    Empleado mejor = null;
 	    int minRetrasos = 0;
 
@@ -166,9 +173,9 @@ public class HomeSolution implements IHomeSolution{
 	        }
 	    }
 		Empleado anterior = t.getEmpleadoTarea(); 
-		anterior.estaDisponible() = true;				//CONTROLAR
+		anterior.estaDisponible = true;				//CONTROLAR
 		t.asignarEmpleado(mejor);						//la idea es que cambie el booleano esta disponible cuando los cambio
-		mejor.estaDisponible() = false;				// y que a latarea se le asigne el nuevo empleado
+		mejor.estaDisponible = false;				// y que a latarea se le asigne el nuevo empleado
 	}
 
 	@Override
@@ -208,7 +215,7 @@ public class HomeSolution implements IHomeSolution{
 	public Object[] empleadosNoAsignados() {
 		List<Empleado> libres = new ArrayList<>();
 	    for (Empleado e : empleados.values()) {
-	        if (e.estaDisponible()) {
+	        if (e.estaDisponible) {
 	            libres.add(e);
 	        }
 	    }
